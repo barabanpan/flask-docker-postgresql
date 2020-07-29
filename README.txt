@@ -25,3 +25,5 @@ docker-compose exec db psql --username=hello_flask --dbname=hello_flask_dev
 docker volume ls
 Thanks to volume, changes in db should stay after rebuild.
 
+3.1 Fix missing things:)
+Also add entrypoint.sh script where you can verify that postgres is up and doing okay before creating tables of starting app.
