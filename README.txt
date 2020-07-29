@@ -27,3 +27,8 @@ Thanks to volume, changes in db should stay after rebuild.
 
 3.1 Fix missing things:)
 Also add entrypoint.sh script where you can verify that postgres is up and doing okay before creating tables of starting app.
+
+4. Add gunicorn for production
+Create docker-compose.prod.yml, .env.prod, .env.prod.db and and two latter to .gitignore. For more info read JSP copybook page 21.
+Run: docker-compose -f docker-compose.prod.yml up -d --build
+
