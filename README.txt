@@ -42,3 +42,6 @@ You need to add a nginx service to docker-compose.prod.yml and create nginx fold
 7. Add static files support via nginx
 Add volume to docker-compose.prod.yml, create folder 'static'. Development doesn't need a volume. Do some other things, described in JSP copybook page 23.
 
+8. Add media files support via nginx
+Media files are files uploaded by user. Do things like in step 7. More info on JSP copybook page 24.
+
