@@ -39,3 +39,6 @@ Dockerfile.prod creates new user for security reasons and also runs some other t
 That's a reverse proxy server. It's there to support static files. At this point it's just there and recieves requests. 
 You need to add a nginx service to docker-compose.prod.yml and create nginx folder in services. It should contain Dockerfile and nginx.conf.
 
+7. Add static files support via nginx
+Add volume to docker-compose.prod.yml, create folder 'static'. Development doesn't need a volume. Do some other things, described in JSP copybook page 23.
+

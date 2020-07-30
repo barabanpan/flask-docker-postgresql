@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -25,3 +25,8 @@ class User(db.Model):
 @app.route("/")
 def index():
     return jsonify({"message": "Hello, World!"})
+
+
+@app.route("/static/<path:filename>")
+def static_files(filename):
+    return send_from_directory(app.config["STATIC_FOLDER"], filename)
