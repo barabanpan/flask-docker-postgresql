@@ -32,3 +32,10 @@ Also add entrypoint.sh script where you can verify that postgres is up and doing
 Create docker-compose.prod.yml, .env.prod, .env.prod.db and and two latter to .gitignore. For more info read JSP copybook page 21.
 Run: docker-compose -f docker-compose.prod.yml up -d --build
 
+5. Add production Dockerfile
+Dockerfile.prod creates new user for security reasons and also runs some other things needed for production. Large and complicated file:)
+
+6. Add Nginx
+That's a reverse proxy server. It's there to support static files. At this point it's just there and recieves requests. 
+You need to add a nginx service to docker-compose.prod.yml and create nginx folder in services. It should contain Dockerfile and nginx.conf.
+
