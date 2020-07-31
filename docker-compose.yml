@@ -3,7 +3,12 @@ version: '3.7'
 services:
   web:
     build: ./services/web
-    command: python manage.py run -h 0.0.0.0
+    #image: web   # tags container SUPPOSEDLY
+    command: sh -c  "
+        celery -A celery_worker.celery worker --detach &&
+        echo ________celery worker is running now________ &&
+        python manage.py run -h 0.0.0.0"
+        
     volumes:
       - ./services/web/:/usr/src/app/
     ports:
@@ -12,6 +17,8 @@ services:
       - ./.env.dev
     depends_on:
       - db
+      - redis
+  
   db:
     image: postgres:12-alpine
     volumes:
@@ -21,5 +28,11 @@ services:
       - POSTGRES_PASSWORD=hello_flask
       - POSTGRES_DB=hello_flask_dev
 
+  redis:
+    image: redis:latest 
+    volumes:
+      - redis:/data
+    
 volumes:
   postgres_data:
+  redis:

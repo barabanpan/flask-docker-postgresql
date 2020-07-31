@@ -5,6 +5,7 @@ services:
     build: 
       context: ./services/web
       dockerfile: Dockerfile.prod
+    image: web_prod
     command: gunicorn --bind 0.0.0.0:5000 manage:app
     volumes:
       - static_volume:/home/app/web/project/static
@@ -15,12 +16,15 @@ services:
       - ./.env.prod
     depends_on:
       - db
+      - redis
+  
   db:
     image: postgres:12-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.prod.db
+  
   nginx:
     build: ./services/nginx
     volumes:
@@ -30,8 +34,24 @@ services:
       - 1337:80
     depends_on:
       - web
+  
+  celery:
+    image: web_prod  # HOPEFULLY doesn't build again
+    command: celery -A celery_worker.celery worker
+   # volumes:
+   # ?   - ./services/web/:/usr/src/app/
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
 
+  redis:
+    image: redis:latest 
+    volumes: 
+      - redis:/data  # ?????
+ 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  redis:

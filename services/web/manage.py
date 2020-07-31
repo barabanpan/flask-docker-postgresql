@@ -1,8 +1,10 @@
 from flask.cli import FlaskGroup
 
-from project import app, db, User
+from project import create_app, db
+from project.models import User
 
 
+app = create_app()
 cli = FlaskGroup(app)
 
 
@@ -16,6 +18,7 @@ def do_fun():
     print("Right round round round".center(70, " "))
 
 
+# Gonna be deprecated. Though works well:)
 @cli.command("create_db")
 def create_db():
     """Create database."""

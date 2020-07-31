@@ -45,3 +45,12 @@ Add volume to docker-compose.prod.yml, create folder 'static'. Development doesn
 8. Add media files support via nginx
 Media files are files uploaded by user. Do things like in step 7. More info on JSP copybook page 24.
 
+9. Add celery and redis for dev
+And send some emails!!!
+For dev:
+ - make celery-redis functionality as in 007
+ - add celery and redis services to docker-compose. Celery and web depend on redis. Hint: celery imports from web directory, so that they are configured as almost same container, but are different. To avoid building same thing twice tag web and use it as image in celery.
+Fuck knows whether it works. Move function that creates db to __init__ from entrypoint.
+It doesn't work, I just missed something.
+Moved celery to web container. Runs with two commands, first is detached.
+

@@ -1,62 +1,37 @@
-import os
-
-from werkzeug.utils import secure_filename
-from flask import (
-    Flask,
-    jsonify,
-    send_from_directory,
-    request,
-    redirect,
-    url_for
-)
+from flask import Flask
+from celery import Celery
+from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 
-
-app = Flask(__name__)
-
-# data in config is taken from .env
-# .env[dev or prod] is stated in docker-compose[dev or prod]
-# and we choose which docker-compose we build a container from
-app.config.from_object("project.config.Config")
-db = SQLAlchemy(app)
+from .config import Config
 
 
-class User(db.Model):
-    __tablename__ = "users"
-
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(128), unique=True, nullable=False)
-    active = db.Column(db.Boolean(), default=True, nullable=False)
-
-    def __init__(self, email):
-        self.email = email
+db = SQLAlchemy()
+mail = Mail()
+celery = Celery(__name__,
+                broker=Config.CELERY_BROKER_URL,
+                backend=Config.CELERY_RESULT_BACKEND)
 
 
-@app.route("/")
-def index():
-    return jsonify({"message": "Hello, World!"})
+def create_app():
+    app = Flask(__name__)
 
+    # data in config is taken from .env
+    # .env[dev or prod] is stated in docker-compose[dev or prod]
+    # and we choose which docker-compose we build a container from
+    app.config.from_object("project.config.Config")
 
-@app.route("/static/<path:filename>")
-def staticfiles(filename):
-    return send_from_directory(app.config["STATIC_FOLDER"], filename)
+    db.init_app(app)
+    mail.init_app(app)
 
+# doesn't seem to work at all
+#    with app.app_context():  # WHAT IS THAT FOR???
+#        @app.before_first_request
+#        def create_tables():
+#            db.create_all()
+#            db.session.commit()
 
-@app.route("/media/<path:filename>")
-def mediafiles(filename):
-    return send_from_directory(app.config["MEDIA_FOLDER"], filename)
+    from .views.views import main_app_bp
+    app.register_blueprint(main_app_bp)
 
-
-@app.route("/upload", methods=["GET", "POST"])
-def upload_file():
-    if request.method == "POST":
-        file = request.files["file"]
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config["MEDIA_FOLDER"], filename))
-    return f"""
-    <!doctype html>
-    <title>upload new File</title>
-    <form action="" method=post enctype=multipart/form-data>
-      <p><input type=file name=file><input type=submit value=Upload>
-    </form>
-    """
+    return app
